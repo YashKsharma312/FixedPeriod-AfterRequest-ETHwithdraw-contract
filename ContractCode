@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+contract FixedPeriodTxn{
+    mapping(address => uint) public balance;
+    mapping(address => uint) public TransactionTime;
+    uint public amount;
+    function deposit() public payable {
+        balance[msg.sender] += msg.value;
+        }
+    function request(uint amt) public{
+        amount=amt*10**18;
+        require(amount<=balance[msg.sender],"insufficient balance");
+        TransactionTime[msg.sender] = block.timestamp +20;
+       }
+    function withdraw() public payable{
+        require(block.timestamp > TransactionTime[msg.sender], "transaction time has not ended");
+        balance[msg.sender]-= amount;
+        payable(msg.sender).transfer(amount);
+        amount=0;
+ }}
